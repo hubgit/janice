@@ -38,7 +38,9 @@ export const similar = ({ like, keyPhrases, year, size = 100 }) => {
       ],
       like,
       min_term_freq: 1,
-      // max_query_terms: 15
+      analyzer: 'stop',
+      // boost_terms: 5,
+      max_query_terms: 7
     }
   })
 
@@ -69,6 +71,8 @@ export const similar = ({ like, keyPhrases, year, size = 100 }) => {
     'journalName',
     'keyPhrases'
   ]
+
+  // const explain = true
 
   return search({ query, _source }, { size })
 }

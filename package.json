@@ -21,6 +21,7 @@
     "styled-components": "^2.2.3"
   },
   "scripts": {
+    "deploy": "now --public",
     "now-build": "GENERATE_SOURCEMAP=false react-scripts build",
     "now-start": "serve --single build/",
     "start": "react-scripts start",
