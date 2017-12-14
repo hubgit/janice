@@ -22,9 +22,8 @@
     "styled-components": "^2.2.3"
   },
   "scripts": {
-    "deploy": "now --public",
-    "now-build": "GENERATE_SOURCEMAP=false react-scripts build",
-    "now-start": "serve --single build/",
+    "predeploy": "npm run build",
+    "deploy": "cd build && now --public --name janice",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
