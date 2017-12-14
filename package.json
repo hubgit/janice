@@ -6,6 +6,7 @@
   "author": "Alf Eaton <eaton.alf@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "d3": "^4.12.0",
     "luxon": "^0.0.22",
     "material-ui": "^1.0.0-beta.21",
     "query-string": "^5.0.1",

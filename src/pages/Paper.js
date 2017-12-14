@@ -64,10 +64,13 @@ class Paper extends React.Component {
               {paper.year && <span>{paper.year} / </span>} {paper.title}
             </StyledExternalLink>
 
-            {paper && <Link to={{
-              pathname: '/',
-              search: '?id=' + paper.paperId
-            }}><span role={'img'} aria-label={'thinking face'}>🤔</span></Link>}
+            <Link to={{ pathname: '/', search: '?id=' + paper.paperId }}>
+              <span role={'img'} aria-label={'thinking face'}>🤔</span>
+            </Link>
+
+            <Link to={{ pathname: '/network', search: '?paper=' + paper.paperId }}>
+              <span role={'img'} aria-label={'web'}>🕸</span>
+            </Link>
           </Title>
         )}
 

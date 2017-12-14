@@ -31,7 +31,7 @@ class Jane extends React.Component {
     const query = qs.parse(location.search)
 
     if (query.id) {
-      const { _source: { title, paperAbstract } } = await getPaper(query.id)
+      const { title, paperAbstract } = await getPaper(query.id)
       query.text = title + '\n\n' + paperAbstract
     }
 

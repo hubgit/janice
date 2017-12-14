@@ -6,7 +6,9 @@ const server = 'https://citable.today/janice/'
 export const getPaper = id => {
   const url = server + 'paper/?' + qs.stringify({ id })
 
-  return window.fetch(url).then(res => res.json())
+  return window.fetch(url)
+    .then(res => res.json())
+    .then(data => data._source)
 }
 
 export const search = (body, params) => {

@@ -1,0 +1,62 @@
+.container {
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000px;
+  font-family: 'Fira Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  user-select: none;
+  cursor: move;
+}
+
+.labels {
+  transform-style: preserve-3d;
+  font-size: 12px;
+  height: 100%;
+  width: 100%;
+}
+
+.label {
+  font-weight: 200;
+  cursor: pointer;
+  position: absolute;
+  display: inline-block;
+  border-radius: 10px;
+  color: white;
+  z-index: 10;
+  background: #111;
+  box-shadow: 0 1px 1px #000;
+}
+
+.label[data-type=author] {
+  background: #aa7700;
+  z-index: 100;
+}
+
+.label[data-type=paper] {
+  opacity: 0.9;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.label:hover {
+  z-index: 1000 !important;
+  opacity: 1;
+  background-color: rgb(30, 140, 32);
+}
+
+.label span {
+  display: inline-block;
+  padding: 5px 10px;
+}
+
+.label[data-selected=true],
+.label[data-expanded=true] {
+  background-color: rgb(30, 140, 32);
+  z-index: 1000;
+  opacity: 1;
+}

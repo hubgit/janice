@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { Column, Columns } from '../components/Columns'
 import { AuthorLink, PaperLink, StyledExternalLink } from '../components/Links'
 import Title from '../components/Title'
@@ -57,13 +58,17 @@ class Author extends React.Component {
 
     return (
       <div>
-        <Title dense>
-          {author && (
+        {author && (
+          <Title dense>
             <StyledExternalLink href={author.url} target={'_blank'}>
               {author.name}
             </StyledExternalLink>
-          )}
-        </Title>
+
+            <Link to={{ pathname: '/network', search: '?author=' + author.authorId }}>
+              <span role={'img'} aria-label={'web'}>🕸</span>
+            </Link>
+          </Title>
+        )}
 
         <Columns>
           <Column style={{whiteSpace:'nowrap'}}>
