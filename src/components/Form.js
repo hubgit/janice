@@ -33,6 +33,7 @@ const Form = ({ handleSubmit, fetched, fetching, phrases }) => (
       fullWidth
       multiline
       autoFocus
+      spellCheck={false}
       placeholder={'Enter an abstract…'}
       style={{whiteSpace:'pre-wrap', border: 'none'}}
     />
