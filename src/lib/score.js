@@ -51,6 +51,7 @@ export const calculateAuthorScores = docs => {
   }, {})
 
   const authors = Object.values(items)
+  authors.forEach(author => author.score = author.score / author.docs.length)
   authors.forEach(normalizeScore(docs))
   authors.sort(highestScoreFirst)
 

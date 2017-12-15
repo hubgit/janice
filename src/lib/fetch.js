@@ -88,3 +88,14 @@ export const authored = id => {
 
   return search({ query }, { size: 1000 })
 }
+
+// export const aggregations = () => search({
+//   aggs: {
+//     years: {
+//       terms: {
+//         field: 'year',
+//         size: 50
+//       }
+//     }
+//   }
+// })

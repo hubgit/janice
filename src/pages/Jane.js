@@ -30,6 +30,8 @@ class Jane extends React.Component {
   async prepare (location) {
     const query = qs.parse(location.search)
 
+    // console.log(await aggregations())
+
     if (query.id) {
       const { title, paperAbstract } = await getPaper(query.id)
       query.text = title + '\n\n' + paperAbstract

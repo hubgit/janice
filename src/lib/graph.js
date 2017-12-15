@@ -1,11 +1,10 @@
 import { scholar } from './scholar'
+import { similar } from './fetch'
+import { calculateAuthorScores, calculatePaperScores } from './score'
 
-const recent = paper => paper.year > 2014
+// const recent = paper => paper.year > 2014
 
 class Graph {
-  linkDistance = 200
-  charge = -100
-  friction = 0.9
   index = {}
   nodes = []
   links = []
@@ -47,11 +46,10 @@ class Graph {
     this.d3 = await import(/* webpackChunkName: "d3" */ 'd3')
 
     this.simulation = this.d3.forceSimulation()
-      .force('charge', this.d3.forceManyBody()
-        .strength(d => d.strength || this.charge))
-      .force('collision', this.d3.forceCollide(60))
+      .force('charge', this.d3.forceManyBody().strength(-0.1))
+      .force('collision', this.d3.forceCollide().radius(100).strength(0.1))
       .force('center', this.d3.forceCenter(offsetWidth / 2, offsetHeight / 2))
-      .velocityDecay(this.friction)
+      .velocityDecay(0.9)
       .stop()
 
     const frame = this.d3.select(this.container)
@@ -88,8 +86,9 @@ class Graph {
     this.simulation
       .nodes(this.nodes)
       .force('link', this.d3.forceLink(this.links)
-        .distance(d => d.distance || this.linkDistance)
-        .strength(d => d.strength || 0.5)
+        .distance(d => d.distance)
+        .strength(d => d.strength)
+        .iterations(5)
       )
       .alpha(1)
       .restart()
@@ -106,14 +105,16 @@ class Graph {
 
     this.labels.attr('data-selected', d => d.selected ? 'true' : 'false')
 
+    console.log(d)
+
     switch (d.type) {
       case 'paper':
       default:
-        this.expand(d.paperId, 'paper')
+        this.expand(d._id, 'paper')
         break
 
       case 'author':
-        this.expand(d.authorId, 'author')
+        this.expand(d._id, 'author')
         break
     }
   }
@@ -122,17 +123,17 @@ class Graph {
     id = `${type}-${id}`
 
     if (!this.index[id]) {
-      this.index[id] = { ...item, id, type, inDegree: 0 }
+      this.index[id] = { ...item, _id: item.id, id, type, inDegree: 0 }
       this.nodes.push(this.index[id])
     }
 
     return this.index[id]
   }
 
-  addLink = ({ source, target, modifier }) => {
+  addLink = ({ source, target, modifier, distance, strength }) => {
     target.inDegree += modifier
 
-    this.links.push({ source, target })
+    this.links.push({ source, target, distance, strength })
   }
 
   expand = async (id, type) => {
@@ -142,61 +143,48 @@ class Graph {
       case 'paper':
       default:
         const paper = await scholar(`paper/${id}`)
+        paper.selected = true
         const node = this.addNode(paper, 'paper', paper.paperId)
 
-        paper.citations.filter(recent).forEach(item => {
-          this.addLink({
-            source: this.addNode(item, 'paper', item.paperId),
-            target: node,
-            modifier: 0
-          })
+        const result = await similar({
+          like: { _id: id },
+          size: 100,
+          year: 0
         })
 
-        paper.references.filter(recent).forEach(item => {
+        const papers = calculatePaperScores(result.hits)
+        const authors = calculateAuthorScores(papers)
+
+        authors.slice(0, 20).forEach(author => {
+          // author.name += ` (${Math.round(author.scorePercent)})`
+          // author.name += ` (${author.docs.length})`
+          const authorNode = this.addNode(author, 'author', author.id)
+
           this.addLink({
             source: node,
-            target: this.addNode(item, 'paper', item.paperId),
-            modifier: 1
+            target: authorNode,
+            modifier: author.docs.length * 10,
+            distance: (100 - author.scorePercent) * 2,
+            strength: 1
           })
+
+          // author.docs.forEach(paper => {
+          //   const paperNode = this.addNode(paper._source, 'paper', paper._source.id)
+          //
+          //   this.addLink({
+          //     source: paperNode,
+          //     target: authorNode,
+          //     modifier: 10,
+          //     distance: 100,
+          //     strength: 0.1
+          //   })
+          // })
         })
 
-        paper.authors.forEach(item => {
-          this.addLink({
-            source: node,
-            target: this.addNode(item, 'author', item.authorId),
-            modifier: 1
-          })
-        })
         break
 
       case 'author':
-        const author = await scholar(`author/${id}`)
-        const authorNode = this.addNode(author, 'author', author.authorId)
-
-        if (!author.papers) return
-
-        await Promise.all(author.papers.slice(0, 25).map(async item => {
-          const paper = await scholar(`paper/${item.paperId}`)
-
-          if (paper.year <= 2014) return
-
-          const paperNode = this.addNode(paper, 'paper', paper.paperId)
-
-          this.addLink({
-            source: paperNode,
-            target: authorNode,
-            modifier: 0
-          })
-
-          paper.authors.forEach(item => {
-            this.addLink({
-              source: authorNode,
-              target: this.addNode(item, 'author', item.authorId),
-              modifier: 5
-            })
-          })
-        }))
-        break;
+        return;
     }
 
     this.run()
