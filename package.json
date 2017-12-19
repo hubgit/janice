@@ -22,7 +22,8 @@
     "styled-components": "^2.2.3"
   },
   "scripts": {
-    "predeploy": "npm run build",
+    "predeploy": "npm run build && npm run package",
+    "package": "cp build-package.json build/package.json",
     "deploy": "cd build && now --public --name janice",
     "start": "react-scripts start",
     "build": "react-scripts build",

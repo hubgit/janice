@@ -1,0 +1,14 @@
+{
+  "name": "janice",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "serve": "^6.4.1"
+  },
+  "scripts": {
+    "start": "serve --single"
+  },
+  "now": {
+    "alias": "janice"
+  }
+}
